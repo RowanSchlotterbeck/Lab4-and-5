@@ -1,7 +1,9 @@
 import java.io.*;
 import java.net.*;
 import java.lang.Runnable;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -13,6 +15,9 @@ public class Lab4Server {
 
     // Hashmap to check connected clients, useful for broadcast function
     private static ConcurrentHashMap <String, ClientHandler> clients = new ConcurrentHashMap<>();
+
+    // Queue using Linked List implementation to create a message history for each client that connects
+    private static Queue<String> chatHistory = new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
 
@@ -49,6 +54,7 @@ public class Lab4Server {
     private static void broadcast(String message, ClientHandler sender) {
         for(Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
             entry.getValue().sendMessage(message);
+
             System.out.println("Sent to " + sender + ": " + message);
         }
 
@@ -78,9 +84,15 @@ public class Lab4Server {
             catch (IOException e) {
                 System.err.println(e);
             }
+
+            for(Object item : chatHistory) {
+                out.println(item); // Sends chat history to the connected client
+                System.out.println("Sent to " + clientName + ": " + item);
+            }
+
         }
 
-        // Overrides the run method to recieve input from the client and broadcast it to all connected clients
+        // Overrides the run method to receive input from the client and broadcast it to all connected clients
         @Override
         public void run() {
 
@@ -88,8 +100,11 @@ public class Lab4Server {
                 String receivedLine;
 
                 while ((receivedLine = in.readLine()) != null) {
+
                     System.out.println("Received from " + clientName +  ": " + receivedLine);
-                    broadcast(clientName + ": " + receivedLine, this); // sends message and the ClientHandler object
+                    String formattedMessage = clientName + ": " + receivedLine;
+                    broadcast(formattedMessage, this); // sends message and the ClientHandler object
+                    chatHistory.add(formattedMessage); // Adds formatted message to the universal queue
 
                 }
             }
@@ -112,7 +127,8 @@ public class Lab4Server {
     }
 }
 
-// Notes
+/* NOTES */
+
 // Server program will need to be multithreaded in order to support multiple clients at one time
 // When a client connects, we will need to create a new thread
 
