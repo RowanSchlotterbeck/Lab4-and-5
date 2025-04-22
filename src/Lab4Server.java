@@ -19,7 +19,7 @@ public class Lab4Server {
     // Queue using Linked List implementation to create a message history for each client that connects
     private static Queue<String> chatHistory = new LinkedList<>();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
 
         // Init server and listen on port for client connections
@@ -53,8 +53,7 @@ public class Lab4Server {
     // Broadcasts a message to all connected clients
     private static void broadcast(String message, ClientHandler sender) {
         for(Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
-            entry.getValue().sendMessage(message);
-
+            entry.getValue().sendMessage(message); // Call sendMessage for every client in the hashmap
             System.out.println("Sent to " + sender + ": " + message);
         }
 
@@ -129,17 +128,22 @@ public class Lab4Server {
 
 /* NOTES */
 
-// Server program will need to be multithreaded in order to support multiple clients at one time
-// When a client connects, we will need to create a new thread
+/*
 
-// Important to isolate each client thread connection to prevent the race condition problem
+This program is a chat application that implements a multithreaded client-server architecture to
+effectively facilitate communication between the clients. One of the other core features of this chat
+application is the use of a Queue implemented through a linked list that stores the universal chat
+history. The chat history is loaded onto a client as soon as it connects and proves to be very efficient
+with a lot of connected users. A thread is used when a client connects to listen for messages from the
+client and send messages back. Similarly, the client also implements a thread to listen for messages
+from the server. Instantiating two threads on both the client and the server could prove to be very
+inefficient with a large amount of connections. One better implementation could be a thread pool,
+which would allow for threads to return to a pool after their use is done. However, that is beyond
+the scope of this project.
 
-// Sequence
-// Create a server socket to listen on a specified port
-    // Connect a client to the serversocket to create two-way communication
-    // Spawn a thread to handle the client, call an instance of the client handler
-// Continue the previous two as the server continues to listen
-// Ensure that when a client closes a connection that all resources are closed
+ */
+
+
 
 
 

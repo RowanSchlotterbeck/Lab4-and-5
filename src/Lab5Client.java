@@ -17,7 +17,7 @@ public class Lab5Client {
     public static void main(String[] args) {
 
         // Creates main frame
-        JFrame frame = new JFrame("Lab 5 Client");
+        JFrame frame = new JFrame("Simple Chat Client");
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
